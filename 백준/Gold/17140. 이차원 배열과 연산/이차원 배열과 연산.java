@@ -80,6 +80,7 @@ public class Main {
             for(int i=0;i<N;i++){
                 for(int j=0;j<M;j++){
                     count[board[i][j]]++;
+                    board[i][j] = 0;
                 }
 
                 for(int k=1;k<=100;k++){
@@ -101,9 +102,7 @@ public class Main {
 
                 Arrays.fill(count, 0);
                 pq.clear();
-                for(;index <100;index++){
-                    board[i][index] = 0;
-                }
+
             }
 
             M = len;
@@ -137,9 +136,6 @@ public class Main {
 
             Arrays.fill(count, 0);
             pq.clear();
-            for(;index <100;index++){
-                board[index][j] = 0;
-            }
         }
         N = len;
     }
