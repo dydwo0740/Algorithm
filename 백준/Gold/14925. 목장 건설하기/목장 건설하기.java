@@ -16,88 +16,29 @@ public class Main {
 
         M = Integer.parseInt(st.nextToken());
 
-        int[][] board = new int[N][M];
-        down = new int[N][M];
+        int[][] board = new int[N + 1][M + 1];
 
-        for (int i = 0; i < N; i++) {
+        for(int i=1;i<=N;i++){
             st = new StringTokenizer(br.readLine());
-            for (int j = 0; j < M; j++) {
+            for(int j=1;j<=M;j++){
                 board[i][j] = Integer.parseInt(st.nextToken());
             }
         }
 
-        for(int i=0;i<M;i++){
-            if(board[N-1][i] == 0){
-                down[N-1][i] = 1;
-            }
-        }
+        int[][] dp = new int[N + 1][M + 1];
+        int ans = 0;
 
-        for(int i=0;i<M;i++){
-            for(int j=N-2;j>=0;j--){
-                if(board[j][i] != 0){
-                    continue;
-                }
-
-                if(board[j + 1][i] == 0){
-                    down[j][i] = down[j + 1][i] + 1;
-                } else{
-                    down[j][i] = 1;
+        for(int i=1;i<=N;i++){
+            for(int j=1;j<=M;j++){
+                if(board[i][j] == 0){
+                    dp[i][j] = Math.min(Math.min(dp[i - 1][j], dp[i][j - 1]), dp[i - 1][j - 1]) + 1;
+                    ans = Math.max(ans, dp[i][j]);
                 }
             }
         }
 
-       /*for(int i=0;i<N;i++){
-            for(int j=0;j<M;j++){
-                bw.write(down[i][j] + " ");
-            }
-            bw.write("\n");
-        }*/
-
-
-
-
-        bw.write(binarySearch(board) + "\n");
-
-
+        bw.write(ans+"\n");
         bw.flush();
     }
-
-    public static int binarySearch(int[][] board) {
-        int left = 1;
-        int right = Math.min(board.length, board[0].length);
-
-        while (left <= right) {
-            int mid = (left + right) / 2;
-            if (isTrue(board, mid)) {
-                //System.out.println("mid = " + mid);
-                left = mid + 1;
-            } else{
-                right = mid - 1;
-            }
-
-        }
-
-        return left - 1;
-    }
-
-    public static boolean isTrue(int[][] board, int len) {
-        for (int i = 0; i + len <= N; i++) {
-            for (int j = 0; j + len <= M; j++) {
-                int cnt = 0;
-                for(int k=j;k<j+len;k++){
-                    if (down[i][k] < len) {
-                        cnt++;
-                    }
-                }
-
-                if(cnt == 0){
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
 
 }
