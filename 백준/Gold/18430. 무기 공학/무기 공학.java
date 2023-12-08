@@ -26,11 +26,8 @@ public class Main {
                 board[i][j] = Integer.parseInt(st.nextToken());
             }
         }
-        for(int i=0;i<N;i++){
-            for(int j=0;j<M;j++){
-                dfs(board, new boolean[N][M], i, 0);
-            }
-        }
+
+        dfs(board, new boolean[N][M], 0, 0);
 
         bw.write(ans + "\n");
         bw.flush();
