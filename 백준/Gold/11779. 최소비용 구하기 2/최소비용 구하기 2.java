@@ -1,102 +1,70 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.*;
+import java.io.*;
 
 public class Main {
-    static int N;
-    static List<int[]>[] g;
-    static String answer;
+    static int n, m, result, start, end;
+    static List<int[]>[] al;
+    static int[] dist;
+    static List<Integer>[] route;
 
-    static class Info{
-        int v;
-        int w;
-        StringBuilder past = new StringBuilder();
-
-        public Info(int v, int w, String str) {
-            this.v = v;
-            this.w = w;
-            this.past.append(str);
-        }
-    }
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        n = Integer.parseInt(br.readLine());
+        m = Integer.parseInt(br.readLine());
+        dist = new int[n + 1];
+        al = new ArrayList[n + 1];
+        route = new ArrayList[n + 1];
+        for (int i = 0; i < n + 1; i++) {
+            al[i] = new ArrayList<>();
+            route[i] = new ArrayList<>();
+            dist[i] = Integer.MAX_VALUE;
+        }
+
+        for (int i = 0; i < m; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+            int c = Integer.parseInt(st.nextToken());
+            al[a].add(new int[]{b, c});
+        }
+
         StringTokenizer st = new StringTokenizer(br.readLine());
-
-        N = Integer.parseInt(st.nextToken());
-
-        st = new StringTokenizer(br.readLine());
-
-        int M = Integer.parseInt(st.nextToken());
-
-        g = new ArrayList[N + 1];
-
-        for (int i = 1; i <= N; i++) {
-            g[i] = new ArrayList<>();
-        }
-
-        for (int i = 0; i < M; i++) {
-            st = new StringTokenizer(br.readLine());
-
-            int v1 = Integer.parseInt(st.nextToken());
-            int v2 = Integer.parseInt(st.nextToken());
-            int dist = Integer.parseInt(st.nextToken());
-
-            g[v1].add(new int[]{v2, dist});
-        }
-
-        st = new StringTokenizer(br.readLine());
-
-        int start = Integer.parseInt(st.nextToken());
-        int end = Integer.parseInt(st.nextToken());
-
-
-        int weight = dijkstra(start, end);
-
-        bw.write(weight + "\n");
-        bw.write(answer.split(" ").length + "\n");
-        bw.write(answer + "\n");
-
-
-        bw.flush();
-        bw.close();
-        br.close();
-    }
-
-    public static int dijkstra(int start, int end) {
-        PriorityQueue<Info> pq = new PriorityQueue<>(Comparator.comparingInt(o -> o.w));
-        int[] dist = new int[N + 1];
-
-        Arrays.fill(dist, Integer.MAX_VALUE);
-
+        start = Integer.parseInt(st.nextToken());
+        end = Integer.parseInt(st.nextToken());
+        PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(o -> o[1]));
+        pq.offer(new int[]{start, 0});
         dist[start] = 0;
-
-        pq.add(new Info(start, 0, String.valueOf(start)));
-
         while (!pq.isEmpty()) {
-            Info cur = pq.poll();
+            int[] cur = pq.poll();
+            //System.out.println(Arrays.toString(cur));
 
-            if (cur.w > dist[cur.v]) {
-                continue;
-            }
+            if (dist[cur[0]] < cur[1]) continue;
 
-            for (int i = 0; i < g[cur.v].size(); i++) {
-                int[] next = g[cur.v].get(i);
-
-                if (dist[next[0]] > next[1] + cur.w) {
-                    dist[next[0]] = next[1] + cur.w;
-                    pq.add(new Info(next[0], dist[next[0]], cur.past.toString() + " " + next[0]));
-
-                    if(next[0] == end){
-                        answer = cur.past.toString() + " " + next[0];
-                    }
+            for (int[] next : al[cur[0]]) {
+                if (dist[next[0]] > cur[1] + next[1]) {
+                    dist[next[0]] = cur[1] + next[1];
+                    route[next[0]].clear(); // 일단 이렇게
+                    route[next[0]].add(cur[0]);
+                    pq.offer(new int[]{next[0], dist[next[0]]});
                 }
             }
-
+        }
+        System.out.println(dist[end]);
+        int cur = end;
+        List<Integer> result = new ArrayList<>();
+        while (cur != start) {
+            result.add(cur);
+            cur = route[cur].get(0);
         }
 
-        return dist[end];
+        result.add(start);
+
+
+        System.out.println(result.size());
+
+        for (int i = result.size() - 1; i>= 0;i--) {
+            System.out.print(result.get(i) + " ");
+        }
     }
+
 }
